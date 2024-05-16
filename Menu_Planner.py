@@ -7,6 +7,7 @@ def print_calendar(year, month, plans):
         if day in plans:
             print(f"Day {day}: {plans[day]}")
 def add_activities(plans, day, activity):
+    pass
     
 
 print("Calendar Planner_v1\nThis program aims to organize a meal and activities plan by month.")
