@@ -1,4 +1,5 @@
 import calendar
+import json
 from tabulate import tabulate
 
 def create_calendar_table(year, month, plans):
@@ -38,26 +39,50 @@ def remove_activity(day, activity):
         plans[day].remove(activity)
         if not plans[day]:  # If the list is empty, remove the day from plans
             del plans[day]
+            
+def save_plans_to_file(plans, filename):
+    with open(filename+'.json', 'w') as file:
+        json.dump(plans, file)
+
+def load_plans_from_file(filename):
+    try:
+        with open(filename+'.json', 'r') as file:
+            plans = json.load(file)
+            return plans
+    except FileNotFoundError:
+        print("File not found. Starting with an empty plan.")
+        return {}
 
 def main():
     print("This is the month planner. You can add meals or activities by selecting the month and days, then adding the activities to each day.")
+    global plans  # This will allow us to modify the global variable 'plans'
     correct_month = False
-
-    while not correct_month:
-        try:
-            month = int(input("type the month you would like to plan (1-12): "))
-            if 1 <= month <= 12:
-                correct_month = True
-            else:
-                print("Month must be an integer from 1 to 12. Try again.")
-        except ValueError:
-            print("Invalid input. Only integers from 1 to 12 are allowed. Try again.")
+    
+    if input("Do you have a file to load (yes/no)? ") == 'yes':
+        filename = input("Enter the filename: ")
+        plans = load_plans_from_file(filename)  # Make sure to update the global plans
+        
+    load_or_not = input("Do you have a file to load and continue to plan there? Enter '1' to load or '2' for a new file: ")
+    if load_or_not ==  '1':
+        to_load = input("Type here the name of your file, as it is: ")
+        plans = load_plans_from_file(to_load)        
+    elif load_or_not == '2':        
+        while not correct_month:
+            try:
+                month = int(input("type the month you would like to plan (1-12): "))
+                if 1 <= month <= 12:
+                    correct_month = True
+                else:
+                    print("Month must be an integer from 1 to 12. Try again.")
+            except ValueError:
+                print("Invalid input. Only integers from 1 to 12 are allowed. Try again.")
     while True:
         print("\nMenu:")
         print("1. Add activities")
         print("2. Remove activities")
         print("3. Print calendar")
-        print("4. Exit")
+        print("4. Save a calendar")
+        print("5. Exit")
         try:
             option = int(input("Select an option: "))
         except ValueError:
@@ -80,16 +105,12 @@ def main():
         elif option == 3:
             create_calendar_table(year, month, plans)
         elif option == 4:
+            name_of_the_file = input("Type the filename to be saved:\n")
+            save_plans_to_file(plans, name_of_the_file)            
+        elif option == 5:
             break
         else:
-            print("Invalid choice. Please enter a number from 1 to 4.")
+            print("Invalid choice. Please enter a number from 1 to 5.")
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-add_activity(days_list, meal)
-create_calendar_table(year, month, plans)
